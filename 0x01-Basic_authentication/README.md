@@ -1,10 +1,73 @@
 # Basic authentication
 
 This project contains tasks for learning to authenticate a user using the Basic authentication scheme.
+## Background Context
+In this project, you will learn what the authentication process means and implement a Basic Authentication on a simple API.
 
+## Resources
+### Read or watch:
+* [REST API Authentication Mechanisms](https://www.youtube.com/watch?v=501dpx2IjGY)
+* [Base64 in Python](https://docs.python.org/3.7/library/base64.html)
+* [HTTP header Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
+* [Flask](https://palletsprojects.com/p/flask/)
+* [Base64 - concept](https://en.wikipedia.org/wiki/Base64)
+* [Custom Error Pages](https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/)
+* [before_request](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Blueprint.before_request)
+* [Download and start your project from this archive](https://intranet.hbtn.io/rltoken/scy2k-OPTBy-DI90EyQ0uw)
+# Simple API
+
+Simple HTTP API for playing with `User` model.
+
+
+## Files
+
+### `models/`
+
+- `base.py`: base of all models of the API - handle serialization to file
+- `user.py`: user model
+
+### `api/v1`
+
+- `app.py`: entry point of the API
+- `views/index.py`: basic endpoints of the API: `/status` and `/stats`
+- `views/users.py`: all users endpoints
+
+
+## Setup
+
+```
+$ pip3 install -r requirements.txt
+```
+
+
+## Run
+
+```
+$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
+```
+
+
+## Routes
+
+- `GET /api/v1/status`: returns the status of the API
+- `GET /api/v1/stats`: returns some stats of the API
+- `GET /api/v1/users`: returns the list of users
+- `GET /api/v1/users/:id`: returns an user based on the ID
+- `DELETE /api/v1/users/:id`: deletes an user based on the ID
+- `POST /api/v1/users`: creates a new user (JSON parameters: `email`, `password`, `last_name` (optional) and `first_name` (optional))
+- `PUT /api/v1/users/:id`: updates an user based on the ID (JSON parameters: `last_name` and `first_name`)
+
+## Learning Objectives
+At the end of this project, you are expected to be able to [explain to anyone](https://fs.blog/2012/04/feynman-technique/), without the help of Google:
+### General
+* What authentication means
+* What Base64 is
+* How to encode a string in Base64
+* What Basic authentication means
+* How to send the Authorization header
 ## Tasks To Complete
 
-+ [x] 0. **Simple-basic-API**
+**[0. Simple-basic-API]()**
   + Setup and start server:
     ```powershell
     bob@dylan:~$ pip3 install -r requirements.txt
@@ -39,7 +102,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
     bob@dylan:~$
     ```
 
-+ [x] 1. **Error handler: Unauthorized**
+**[1. Error handler: Unauthorized]()**
   + Edit [api/v1/app.py](api/v1/app.py):
     + Add a new error handler for this status code, the response must be:
       + A JSON: `{"error": "Unauthorized"}`.
@@ -61,7 +124,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
     + This endpoint must raise a 403 error by using `abort` - [Custom Error Pages](https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/).
   + By calling `abort(403)`, the error handler for 403 will be executed.
 
-+ [x] 3. **Auth class**
+**[3. Auth class]()**
   + Create a class to manage the API authentication.
     + Create a folder [api/v1/auth](api/v1/auth).
     + Create an empty file [api/v1/auth/__init__.py](api/v1/auth/__init__.py).
@@ -74,7 +137,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
       + Public method `def current_user(self, request=None) -> TypeVar('User'):` that returns `None` - `request` will be the Flask request object.
     + This class is the template for all authentication system you will implement.
 
-+ [x] 4. **Define which routes don't need authentication**
+**[4. Define which routes don't need authentication]()**
   + Update the method `def require_auth(self, path: str, excluded_paths: List[str]) -> bool:` in `Auth` in [api/v1/auth/auth.py](api/v1/auth/auth.py) that returns `True` if the path is not in the list of strings `excluded_paths`:
     + Returns `True` if path is `None`.
     + Returns `True` if `excluded_paths` is `None` or empty.
@@ -82,7 +145,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
     + You can assume `excluded_paths` contains string path always ending by a `/`.
     + This method must be slash tolerant: `path=/api/v1/status` and `path=/api/v1/status/` must be returned `False` if `excluded_paths` contains `/api/v1/status/`.
 
-+ [x] 5. **Request validation!**
+**[5. Request validation!]()**
   + Now you will validate all requests to secure the API.
   + Update the method `def authorization_header(self, request=None) -> str:` in [api/v1/auth/auth.py](api/v1/auth/auth.py):
     + If request is `None`, returns `None`.
@@ -101,14 +164,14 @@ This project contains tasks for learning to authenticate a user using the Basic 
       + If `auth.authorization_header(request)` returns `None`, raise the error `401` - you must use `abort`.
       + If `auth.current_user(request)` returns `None`, raise the error `403` - you must use `abort`.
 
-+ [x] 6. **Basic auth**
+**[6. Basic auth]()**
   + Create a class `BasicAuth` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) that inherits from `Auth`. For the moment this class will be empty.
   + Update [api/v1/app.py](api/v1/app.py) for using `BasicAuth` class instead of `Auth` depending on the value of the environment variable `AUTH_TYPE`, If `AUTH_TYPE` is equal to `basic_auth`:
     + Import `BasicAuth` from `api.v1.auth.basic_auth`.
     + Create an instance of `BasicAuth` and assign it to the variable `auth`.
   + Otherwise, keep the previous mechanism with `auth` an instance of `Auth`.
 
-+ [x] 7. **Basic - Base64 part**
+**[7. Basic - Base64 part]()**
   + Add the method `def extract_base64_authorization_header(self, authorization_header: str) -> str:` in the class `BasicAuth` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) that returns the Base64 part of the `Authorization` header for a Basic Authentication:
     + Return None if `authorization_header` is `None`.
     + Return None if `authorization_header` is not a string.
@@ -116,14 +179,14 @@ This project contains tasks for learning to authenticate a user using the Basic 
     + Otherwise, return the value after `Basic` (after the space).
     + You can assume `authorization_header` contains only one `Basic`.
 
-+ [x] 8. **Basic - Base64 decode**
+**[8. Basic - Base64 decode]()**
   + Add the method `def decode_base64_authorization_header(self, base64_authorization_header: str) -> str:` in the class `BasicAuth` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) that returns the decoded value of a Base64 string `base64_authorization_header`:
     + Return `None` if `base64_authorization_header` is `None`.
     + Return `None` if `base64_authorization_header` is not a string.
     + Return `None` if `base64_authorization_header` is not a valid Base64 - you can use `try/except`.
     + Otherwise, return the decoded value as UTF8 string - you can use `decode('utf-8')`.
 
-+ [x] 9. **Basic - User credentials**
+**[Basic - User credentials]()**
   + Add the method `def extract_user_credentials(self, decoded_base64_authorization_header: str) -> (str, str)` in the class `BasicAuth` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) that returns the user's email and password from the Base64 decoded value.
     + This method must return 2 values.
     + Return `None, None` if `decoded_base64_authorization_header` is `None`.
@@ -132,7 +195,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
     + Otherwise, return the user email and the user password - these 2 values must be separated by a `:`.
     + You can assume `decoded_base64_authorization_header` will contain only one `:`.
 
-+ [x] 10. **Basic - User object**
+**[10. Basic - User object]()**
   + Add the method `def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar('User'):` in the class `BasicAuth` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) that returns the `User` instance based on the user's email and password.
     + Return `None` if `user_email` is `None` or not a string.
     + Return `None` if `user_pwd` is `None` or not a string.
@@ -140,7 +203,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
     + Return `None` if `user_pwd` is not the password of the `User` instance found - you must use the method `is_valid_password` of `User`.
     + Otherwise, return the `User` instance.
 
-+ [x] 11. **Basic - Overload current_user - and BOOM!**
+ **[11. Basic - Overload current_user - and BOOM!]()**
   + Now, you have all the pieces for having a complete Basic authentication.
   + Add the method `def current_user(self, request=None) -> TypeVar('User')` in the class `BasicAuth` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) that overloads `Auth` and retrieves the `User` instance for a request:
     + You must use `authorization_header`.
@@ -150,7 +213,7 @@ This project contains tasks for learning to authenticate a user using the Basic 
     + You must use `user_object_from_credentials`.
   + With this update, now your API is fully protected by a Basic Authentication. Enjoy!
 
-+ [x] 12. **Basic - Allow password with ":"**
+**[12. Basic - Allow password with ":"]()**
   + Improve the method `def extract_user_credentials(self, decoded_base64_authorization_header)` in [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py) to allow password with `:`.
 
 + [x] 13. **Require auth with stars**
