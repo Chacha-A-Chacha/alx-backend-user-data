@@ -376,10 +376,44 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
 bob@dylan:~$
 
 ```
-**[8. Credentials validation]()** 
+**[8. Credentials validation](/auth.py)** 
 
+In this task, you will implement the `Auth.valid_login` method. It should expect `email` and `password` required arguments and return a boolean.
 
-**[9. Generate UUIDs]()** 
+Try locating the user by email. If it exists, check the password with `bcrypt.checkpw`. If it matches return `True`. In any other case, return `False`.
+```python
+bob@dylan:~$ cat main.py
+#!/usr/bin/env python3
+"""
+Main file
+"""
+from auth import Auth
+
+email = 'bob@bob.com'
+password = 'MyPwdOfBob'
+auth = Auth()
+
+auth.register_user(email, password)
+
+print(auth.valid_login(email, password))
+
+print(auth.valid_login(email, "WrongPwd"))
+
+print(auth.valid_login("unknown@email", password))
+
+bob@dylan:~$ python3 main.py
+True
+False
+False
+bob@dylan:~$ 
+```
+
+**[9. Generate UUIDs](/auth.py)** 
+
+In this task you will implement a `_generate_uuid` function in the `auth` module. The function should return a string representation of a new UUID. Use the `uuid` module.
+
+Note that the method is private to the `auth` module and should **NOT** be used outside of it.
+
 **[10. Get session ID]()** 
 **[11. Log in]()** 
 **[12. Find user by session ID]()** 
