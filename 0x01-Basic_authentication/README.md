@@ -68,6 +68,10 @@ At the end of this project, you are expected to be able to [explain to anyone](h
 ## Tasks To Complete
 
 **[0. Simple-basic-API]()**
+
+Download and start your project from this [archive.zip](/ec2f874b061bd3a2915949f081f4f5f055104f20_2.zip)
+
+In this archive, you will find a simple API with one model: User. Storage of these users is done via a serialization/deserialization in files.
   + Setup and start server:
     ```powershell
     bob@dylan:~$ pip3 install -r requirements.txt
